@@ -1,4 +1,4 @@
-import { ServerError } from "../errors/server.error.ts";
+import { ServerError } from "../errors";
 import { IHttpResponse } from "../protocols/http";
 
 export function httpBadRequest(err: Error): IHttpResponse {
