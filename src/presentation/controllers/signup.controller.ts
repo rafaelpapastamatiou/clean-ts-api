@@ -4,12 +4,12 @@ import { IHttpRequest, IHttpResponse } from "../protocols/http";
 
 export class SignUpController {
   handle(httpRequest: IHttpRequest): IHttpResponse {
-    if (!httpRequest.body.name) {
-      return httpBadRequest(new MissingParamError("name"));
-    }
+    const requiredFields = ["name", "email", "password"];
 
-    if (!httpRequest.body.email) {
-      return httpBadRequest(new MissingParamError("email"));
+    for (const field of requiredFields) {
+      if (!httpRequest.body[field]) {
+        return httpBadRequest(new MissingParamError(field));
+      }
     }
 
     return {
