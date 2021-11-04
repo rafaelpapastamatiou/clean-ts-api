@@ -57,7 +57,8 @@
           "error",
           { "devDependencies": ["**/*.spec.js"] }
       ],
-      "no-restricted-syntax": "off"
+      "no-restricted-syntax": "off",
+      "max-classes-per-file": "off"
   },
   "settings": {
       "import/resolver": {
