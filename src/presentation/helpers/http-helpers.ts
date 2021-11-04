@@ -1,5 +1,5 @@
 import { ServerError } from "../errors";
-import { IHttpResponse } from "../protocols/http";
+import { IHttpResponse } from "../protocols";
 
 export function httpBadRequest(err: Error): IHttpResponse {
   return {
