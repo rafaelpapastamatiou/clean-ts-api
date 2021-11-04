@@ -1,5 +1,5 @@
 import { MissingParamError } from "../errors/missing-param.error";
-import { httpBadRequest } from "../helpers/http/http-bad-request";
+import { httpBadRequest } from "../helpers/http-helpers";
 import { IHttpRequest, IHttpResponse } from "../protocols/http";
 
 export class SignUpController {
