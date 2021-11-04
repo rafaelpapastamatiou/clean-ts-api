@@ -7,14 +7,28 @@ interface IMakeSut {
   emailValidatorStub: IEmailValidator;
 }
 
-const makeSut = (): IMakeSut => {
+const makeEmailValidator = (): IEmailValidator => {
   class EmailValidatorStub implements IEmailValidator {
     isValid(_email: string): boolean {
       return true;
     }
   }
 
-  const emailValidatorStub = new EmailValidatorStub();
+  return new EmailValidatorStub();
+};
+
+const makeEmailValidatorWithError = (): IEmailValidator => {
+  class EmailValidatorStub implements IEmailValidator {
+    isValid(email: string): boolean {
+      throw new Error();
+    }
+  }
+
+  return new EmailValidatorStub();
+};
+
+const makeSut = (): IMakeSut => {
+  const emailValidatorStub = makeEmailValidator();
 
   const sut = new SignUpController(emailValidatorStub);
 
@@ -135,13 +149,7 @@ describe("SignUp Controller", () => {
   });
 
   test("should return 500 if EmailValidator throws", () => {
-    class EmailValidatorStub implements IEmailValidator {
-      isValid(email: string): boolean {
-        throw new Error();
-      }
-    }
-
-    const emailValidatorStub = new EmailValidatorStub();
+    const emailValidatorStub = makeEmailValidatorWithError();
 
     const sut = new SignUpController(emailValidatorStub);
 
