@@ -1,0 +1,7 @@
+{
+  "name": "clean-node-api",
+  "version": "1.0.0",
+  "main": "index.js",
+  "author": "Rafael Papastamatiou <rafaelpapas1412@gmail.com>",
+  "license": "MIT"
+}
