@@ -220,7 +220,7 @@ describe("SignUp Controller", () => {
     const httpRequest = {
       body: {
         name: "John Doe",
-        email: "invalidemail@mail.com",
+        email: "valid_email@email.com",
         password: "123456",
         passwordConfirmation: "123456",
       },
@@ -230,8 +230,33 @@ describe("SignUp Controller", () => {
 
     expect(addAccountSpy).toHaveBeenCalledWith({
       name: "John Doe",
-      email: "invalidemail@mail.com",
+      email: "valid_email@email.com",
       password: "123456",
     });
+  });
+
+  test("should return 500 if AddAccount throws", () => {
+    const emailValidatorStub = makeEmailValidator();
+    const addAccountStub = makeAddAccount();
+
+    jest.spyOn(addAccountStub, "add").mockImplementation(() => {
+      throw new Error();
+    });
+
+    const sut = new SignUpController(emailValidatorStub, addAccountStub);
+
+    const httpRequest = {
+      body: {
+        name: "John Doe",
+        email: "valid_email@email.com",
+        password: "123456",
+        passwordConfirmation: "123456",
+      },
+    };
+
+    const httpResponse = sut.handle(httpRequest);
+
+    expect(httpResponse.statusCode).toBe(500);
+    expect(httpResponse.body).toEqual(new ServerError());
   });
 });
