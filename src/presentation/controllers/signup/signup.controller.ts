@@ -1,12 +1,12 @@
-import { IAddAccount } from "../../domain/useCases/add-account";
-import { InvalidParamError, MissingParamError } from "../errors";
-import { httpBadRequest, httpServerError } from "../helpers/http-helpers";
+import { InvalidParamError, MissingParamError } from "../../errors";
+import { httpBadRequest, httpServerError } from "../../helpers/http-helpers";
 import {
   IController,
   IEmailValidator,
   IHttpRequest,
   IHttpResponse,
-} from "../protocols";
+  IAddAccount,
+} from "./signup.protocols";
 
 export class SignUpController implements IController {
   constructor(
