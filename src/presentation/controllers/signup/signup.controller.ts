@@ -1,5 +1,9 @@
 import { InvalidParamError, MissingParamError } from "../../errors";
-import { httpBadRequest, httpServerError } from "../../helpers/http-helpers";
+import {
+  httpBadRequest,
+  httpServerError,
+  httpSuccess,
+} from "../../helpers/http-helpers";
 import {
   IController,
   IEmailValidator,
@@ -47,10 +51,7 @@ export class SignUpController implements IController {
         password,
       });
 
-      return {
-        statusCode: 200,
-        body: account,
-      };
+      return httpSuccess(account);
     } catch (err) {
       return httpServerError();
     }

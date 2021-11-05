@@ -14,3 +14,10 @@ export function httpServerError(): IHttpResponse {
     body: new ServerError(),
   };
 }
+
+export function httpSuccess(data: any): IHttpResponse {
+  return {
+    statusCode: 200,
+    body: data,
+  };
+}
