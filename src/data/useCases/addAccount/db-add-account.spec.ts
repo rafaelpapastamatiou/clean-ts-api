@@ -6,14 +6,18 @@ interface IMakeSut {
   encrypterStub: IEncrypter;
 }
 
-const makeSut = (): IMakeSut => {
+const makeEncrypter = (): IEncrypter => {
   class EncrypterStub implements IEncrypter {
     async encrypt(value: string): Promise<string> {
       return value;
     }
   }
 
-  const encrypterStub = new EncrypterStub();
+  return new EncrypterStub();
+};
+
+const makeSut = (): IMakeSut => {
+  const encrypterStub = makeEncrypter();
 
   const sut = new DbAddAccount(encrypterStub);
 
