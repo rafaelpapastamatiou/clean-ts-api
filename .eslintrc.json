@@ -58,7 +58,8 @@
           { "devDependencies": ["**/*.spec.js"] }
       ],
       "no-restricted-syntax": "off",
-      "max-classes-per-file": "off"
+      "max-classes-per-file": "off",
+      "no-underscore-dangle": "off"
   },
   "settings": {
       "import/resolver": {
