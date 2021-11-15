@@ -1,27 +1,49 @@
 import { DbAddAccount } from "./db-add-account";
-import { IEncrypter } from "./db-add-account.protocols";
+import {
+  IAccountModel,
+  IAddAccountModel,
+  IAddAccountRepository,
+  IEncrypter,
+} from "./db-add-account.protocols";
 
 interface IMakeSut {
   sut: DbAddAccount;
   encrypterStub: IEncrypter;
+  addAccountRepositoryStub: IAddAccountRepository;
 }
 
 const makeEncrypter = (): IEncrypter => {
   class EncrypterStub implements IEncrypter {
     async encrypt(value: string): Promise<string> {
-      return value;
+      return "hashed_password";
     }
   }
 
   return new EncrypterStub();
 };
 
+const makeAddAccountRepository = (): IAddAccountRepository => {
+  class AddAccountRepositoryStub implements IAddAccountRepository {
+    async add(data: IAddAccountModel): Promise<IAccountModel> {
+      return {
+        id: "valid_id",
+        name: "John Doe",
+        email: "johndoe@email.com",
+        password: "hashed_password",
+      };
+    }
+  }
+
+  return new AddAccountRepositoryStub();
+};
+
 const makeSut = (): IMakeSut => {
   const encrypterStub = makeEncrypter();
+  const addAccountRepositoryStub = makeAddAccountRepository();
 
-  const sut = new DbAddAccount(encrypterStub);
+  const sut = new DbAddAccount(encrypterStub, addAccountRepositoryStub);
 
-  return { sut, encrypterStub };
+  return { sut, encrypterStub, addAccountRepositoryStub };
 };
 
 describe("DbAddAccount UseCase", () => {
@@ -59,5 +81,25 @@ describe("DbAddAccount UseCase", () => {
     const account = sut.add(accountData);
 
     await expect(account).rejects.toThrow();
+  });
+
+  test("should call AddAccountRepository with correct values", async () => {
+    const { sut, addAccountRepositoryStub } = makeSut();
+
+    const repositoryAddSpy = jest.spyOn(addAccountRepositoryStub, "add");
+
+    const accountData = {
+      name: "John Doe",
+      email: "johndoe@email.com",
+      password: "johndoepwd123",
+    };
+
+    await sut.add(accountData);
+
+    expect(repositoryAddSpy).toHaveBeenCalledWith({
+      name: "John Doe",
+      email: "johndoe@email.com",
+      password: "hashed_password",
+    });
   });
 });
