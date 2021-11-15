@@ -13,11 +13,6 @@ export class MongoAccountRepository implements IAddAccountRepository {
 
     if (!account) throw new Error("Error saving account to mongodb.");
 
-    const { _id, ...accountData } = account;
-
-    return {
-      id: _id,
-      ...accountData,
-    } as IAccountModel;
+    return MongoHelper.map<IAccountModel>(account);
   }
 }
