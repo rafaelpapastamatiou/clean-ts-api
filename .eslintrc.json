@@ -53,11 +53,11 @@
               "ts": "never"
           }
       ],
- 
       "no-restricted-syntax": "off",
       "max-classes-per-file": "off",
       "no-underscore-dangle": "off",
-      "import/no-extraneous-dependencies": ["error", { "devDependencies": true }]
+      "import/no-extraneous-dependencies": ["error", { "devDependencies": true }],
+      "no-console": "off"
   },
   "settings": {
       "import/resolver": {
