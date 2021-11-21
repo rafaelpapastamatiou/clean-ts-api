@@ -55,7 +55,14 @@
       ],
       "import/no-extraneous-dependencies": [
           "error",
-          { "devDependencies": ["**/*.spec.js"] }
+          { 
+            " devDependencies": [
+              "**/*.spec.js", 
+              "**/*.test.js",
+              "**/*.spec.ts", 
+              "**/*.test.ts"
+            ]
+          }
       ],
       "no-restricted-syntax": "off",
       "max-classes-per-file": "off",
