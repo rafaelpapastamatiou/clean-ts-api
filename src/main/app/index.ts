@@ -4,6 +4,6 @@ import { setupMiddlewares } from "./middlewares";
 
 const app = express();
 
-setupMiddlewares(app)
+setupMiddlewares(app);
 
 export { app };
