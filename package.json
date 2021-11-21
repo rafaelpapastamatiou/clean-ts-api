@@ -35,7 +35,7 @@
   },
   "scripts": {
     "dev": "ts-node-dev --inspect --transpile-only --ignore-watch node_modules --respawn src/main/server.ts",
-    "test": "jest --noStackTrace --runInBand --no-cache",
+    "test": "jest --silent --noStackTrace --runInBand --no-cache",
     "test:verbose": "jest --runInBand",
     "test:unit": "yarn test -- --watch -c jest-unit.config.ts",
     "test:integration": "yarn test -- --watch -c jest-integration.config.ts",
