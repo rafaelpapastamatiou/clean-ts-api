@@ -4,5 +4,5 @@ export interface IAuthenticationModel {
 }
 
 export interface IAuthentication {
-  auth(data: IAuthenticationModel): Promise<string>;
+  auth(data: IAuthenticationModel): Promise<string | undefined>;
 }

@@ -4,6 +4,7 @@ import {
   httpBadRequest,
   httpServerError,
   httpSuccess,
+  httpUnauthorized,
 } from "../../helpers/http-helpers";
 import {
   IController,
@@ -38,10 +39,12 @@ export class LoginController implements IController {
 
       if (!isEmailValid) return httpBadRequest(new InvalidParamError("email"));
 
-      await this.authentication.auth({
+      const accessToken = await this.authentication.auth({
         email,
         password,
       });
+
+      if (!accessToken) return httpUnauthorized();
 
       return httpSuccess({});
     } catch (err) {
