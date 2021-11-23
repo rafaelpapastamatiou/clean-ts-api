@@ -8,6 +8,13 @@ interface IMakeSut {
   emailValidatorStub: IEmailValidator;
 }
 
+const makeFakeRequest = (): IHttpRequest => ({
+  body: {
+    email: "any_email@email.com",
+    password: "any_password",
+  },
+});
+
 const makeEmailValidator = (): IEmailValidator => {
   class EmailValidatorStub implements IEmailValidator {
     isValid(email: string): boolean {
@@ -67,12 +74,7 @@ describe("Login Controller", () => {
 
     const isValidSpy = jest.spyOn(emailValidatorStub, "isValid");
 
-    const httpRequest: IHttpRequest = {
-      body: {
-        email: "any_email@email.com",
-        password: "any_password",
-      },
-    };
+    const httpRequest = makeFakeRequest();
 
     await sut.handle(httpRequest);
 
@@ -84,12 +86,7 @@ describe("Login Controller", () => {
 
     jest.spyOn(emailValidatorStub, "isValid").mockReturnValueOnce(false);
 
-    const httpRequest: IHttpRequest = {
-      body: {
-        email: "any_email@email.com",
-        password: "any_password",
-      },
-    };
+    const httpRequest = makeFakeRequest();
 
     const httpResponse = await sut.handle(httpRequest);
 
