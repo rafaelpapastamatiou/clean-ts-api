@@ -1,3 +1,3 @@
 export interface IValidation {
-  validate(data: Record<string, unknown>): Promise<void>;
+  validate(data: Record<string, unknown>): Promise<Error | undefined>;
 }

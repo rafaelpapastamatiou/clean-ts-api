@@ -63,8 +63,8 @@ const makeAddAccount = (): IAddAccount => {
 
 const makeValidation = (): IValidation => {
   class ValidationStub implements IValidation {
-    async validate(_data: Record<string, unknown>): Promise<void> {
-      console.log("validating");
+    async validate(_data: Record<string, unknown>): Promise<Error | undefined> {
+      return undefined;
     }
   }
 
