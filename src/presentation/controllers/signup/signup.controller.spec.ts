@@ -15,12 +15,14 @@ import {
   IAccountModel,
   IAddAccountModel,
   IHttpRequest,
+  IValidation,
 } from "./signup.protocols";
 
 interface IMakeSut {
   sut: SignUpController;
   emailValidatorStub: IEmailValidator;
   addAccountStub: IAddAccount;
+  validationStub: IValidation;
 }
 
 const makeFakeRequest = (): IHttpRequest => ({
@@ -59,16 +61,32 @@ const makeAddAccount = (): IAddAccount => {
   return new AddAccountStub();
 };
 
+const makeValidation = (): IValidation => {
+  class ValidationStub implements IValidation {
+    async validate(_data: Record<string, unknown>): Promise<void> {
+      console.log("validating");
+    }
+  }
+
+  return new ValidationStub();
+};
+
 const makeSut = (): IMakeSut => {
   const emailValidatorStub = makeEmailValidator();
   const addAccountStub = makeAddAccount();
+  const validationStub = makeValidation();
 
-  const sut = new SignUpController(emailValidatorStub, addAccountStub);
+  const sut = new SignUpController(
+    emailValidatorStub,
+    addAccountStub,
+    validationStub
+  );
 
   return {
     sut,
     emailValidatorStub,
     addAccountStub,
+    validationStub,
   };
 };
 
@@ -183,7 +201,7 @@ describe("SignUp Controller", () => {
 
     const httpRequest = makeFakeRequest();
 
-    sut.handle(httpRequest);
+    await sut.handle(httpRequest);
 
     expect(isEmailValidSpy).toHaveBeenCalledWith(httpRequest.body.email);
   });
@@ -191,12 +209,17 @@ describe("SignUp Controller", () => {
   test("should return 500 if EmailValidator throws", async () => {
     const emailValidatorStub = makeEmailValidator();
     const addAccountStub = makeAddAccount();
+    const validationStub = makeValidation();
 
     jest.spyOn(emailValidatorStub, "isValid").mockImplementation(() => {
       throw new Error();
     });
 
-    const sut = new SignUpController(emailValidatorStub, addAccountStub);
+    const sut = new SignUpController(
+      emailValidatorStub,
+      addAccountStub,
+      validationStub
+    );
 
     const httpRequest = makeFakeRequest();
 
@@ -212,7 +235,7 @@ describe("SignUp Controller", () => {
 
     const httpRequest = makeFakeRequest();
 
-    sut.handle(httpRequest);
+    await sut.handle(httpRequest);
 
     expect(addAccountSpy).toHaveBeenCalledWith({
       name: httpRequest.body.name,
@@ -224,12 +247,16 @@ describe("SignUp Controller", () => {
   test("should return 500 if AddAccount throws", async () => {
     const emailValidatorStub = makeEmailValidator();
     const addAccountStub = makeAddAccount();
-
+    const validationStub = makeValidation();
     jest.spyOn(addAccountStub, "add").mockImplementation(async () => {
       return new Promise((_, reject) => reject(new Error()));
     });
 
-    const sut = new SignUpController(emailValidatorStub, addAccountStub);
+    const sut = new SignUpController(
+      emailValidatorStub,
+      addAccountStub,
+      validationStub
+    );
 
     const httpRequest = {};
 
@@ -248,5 +275,17 @@ describe("SignUp Controller", () => {
     const fakeAccount = makeFakeAccount();
 
     expect(httpResponse).toEqual(httpSuccess(fakeAccount));
+  });
+
+  test("should call Validation with correct values", async () => {
+    const { sut, validationStub } = makeSut();
+
+    const validateSpy = jest.spyOn(validationStub, "validate");
+
+    const httpRequest = makeFakeRequest();
+
+    sut.handle(httpRequest);
+
+    expect(validateSpy).toHaveBeenCalledWith(httpRequest.body);
   });
 });
