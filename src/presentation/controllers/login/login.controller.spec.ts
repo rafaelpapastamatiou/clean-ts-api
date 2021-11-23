@@ -1,7 +1,3 @@
-import {
-  IAuthentication,
-  IAuthenticationModel,
-} from "../../../domain/useCases/authentication";
 import { InvalidParamError, MissingParamError } from "../../errors";
 import {
   httpBadRequest,
@@ -9,7 +5,12 @@ import {
   httpUnauthorized,
 } from "../../helpers/http-helpers";
 import { LoginController } from "./login.controller";
-import { IEmailValidator, IHttpRequest } from "./login.protocols";
+import {
+  IEmailValidator,
+  IHttpRequest,
+  IAuthentication,
+  IAuthenticationModel,
+} from "./login.protocols";
 
 interface IMakeSut {
   sut: LoginController;

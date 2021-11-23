@@ -1,4 +1,3 @@
-import { IAuthentication } from "../../../domain/useCases/authentication";
 import { InvalidParamError, MissingParamError } from "../../errors";
 import {
   httpBadRequest,
@@ -11,6 +10,7 @@ import {
   IEmailValidator,
   IHttpRequest,
   IHttpResponse,
+  IAuthentication,
 } from "./login.protocols";
 
 export class LoginController implements IController {
