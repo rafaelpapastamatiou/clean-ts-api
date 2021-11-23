@@ -12,9 +12,22 @@ interface IMakeSut {
   addAccountRepositoryStub: IAddAccountRepository;
 }
 
+const makeFakeAccount = (): IAccountModel => ({
+  id: "valid_id",
+  name: "John Doe",
+  email: "johndoe@email.com",
+  password: "hashed_password",
+});
+
+const makeFakeAccountData = (): IAddAccountModel => ({
+  name: "John Doe",
+  email: "johndoe@email.com",
+  password: "johndoepwd123",
+});
+
 const makeEncrypter = (): IEncrypter => {
   class EncrypterStub implements IEncrypter {
-    async encrypt(value: string): Promise<string> {
+    async encrypt(_value: string): Promise<string> {
       return "hashed_password";
     }
   }
@@ -24,13 +37,8 @@ const makeEncrypter = (): IEncrypter => {
 
 const makeAddAccountRepository = (): IAddAccountRepository => {
   class AddAccountRepositoryStub implements IAddAccountRepository {
-    async add(data: IAddAccountModel): Promise<IAccountModel> {
-      return {
-        id: "valid_id",
-        name: "John Doe",
-        email: "johndoe@email.com",
-        password: "hashed_password",
-      };
+    async add(_data: IAddAccountModel): Promise<IAccountModel> {
+      return makeFakeAccount();
     }
   }
 
@@ -52,11 +60,7 @@ describe("DbAddAccount UseCase", () => {
 
     const encryptSpy = jest.spyOn(encrypterStub, "encrypt");
 
-    const accountData = {
-      name: "John Doe",
-      email: "johndoe@email.com",
-      password: "johndoepwd123",
-    };
+    const accountData = makeFakeAccountData();
 
     await sut.add(accountData);
 
@@ -72,11 +76,7 @@ describe("DbAddAccount UseCase", () => {
       })
     );
 
-    const accountData = {
-      name: "John Doe",
-      email: "johndoe@email.com",
-      password: "johndoepwd123",
-    };
+    const accountData = makeFakeAccountData();
 
     const account = sut.add(accountData);
 
@@ -88,11 +88,7 @@ describe("DbAddAccount UseCase", () => {
 
     const repositoryAddSpy = jest.spyOn(addAccountRepositoryStub, "add");
 
-    const accountData = {
-      name: "John Doe",
-      email: "johndoe@email.com",
-      password: "johndoepwd123",
-    };
+    const accountData = makeFakeAccountData();
 
     await sut.add(accountData);
 
@@ -112,11 +108,7 @@ describe("DbAddAccount UseCase", () => {
       })
     );
 
-    const accountData = {
-      name: "John Doe",
-      email: "johndoe@email.com",
-      password: "johndoepwd123",
-    };
+    const accountData = makeFakeAccountData();
 
     const account = sut.add(accountData);
 
@@ -126,19 +118,10 @@ describe("DbAddAccount UseCase", () => {
   test("should return an account on success", async () => {
     const { sut } = makeSut();
 
-    const accountData = {
-      name: "John Doe",
-      email: "johndoe@email.com",
-      password: "johndoepwd123",
-    };
+    const accountData = makeFakeAccountData();
 
     const account = await sut.add(accountData);
 
-    expect(account).toEqual({
-      id: "valid_id",
-      name: "John Doe",
-      email: "johndoe@email.com",
-      password: "hashed_password",
-    });
+    expect(account).toEqual(makeFakeAccount());
   });
 });
