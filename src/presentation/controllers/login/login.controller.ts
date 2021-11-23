@@ -12,13 +12,19 @@ import {
 } from "./login.protocols";
 
 export class LoginController implements IController {
+  constructor(private emailValidator: IEmailValidator) {}
+
   async handle(httpRequest: IHttpRequest): Promise<IHttpResponse> {
     try {
       const { email, password } = httpRequest.body;
 
       if (!email) return httpBadRequest(new MissingParamError("email"));
 
-      return httpBadRequest(new MissingParamError("password"));
+      if (!password) return httpBadRequest(new MissingParamError("password"));
+
+      this.emailValidator.isValid(email);
+
+      return httpSuccess({});
     } catch (err) {
       return httpServerError(err as Error);
     }
