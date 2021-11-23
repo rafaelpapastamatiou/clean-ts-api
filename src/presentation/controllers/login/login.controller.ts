@@ -20,6 +20,14 @@ export class LoginController implements IController {
 
   async handle(httpRequest: IHttpRequest): Promise<IHttpResponse> {
     try {
+      const requiredFields = ["email", "password"];
+
+      for (const field of requiredFields) {
+        if (!httpRequest.body[field]) {
+          return httpBadRequest(new MissingParamError(field));
+        }
+      }
+
       const { email, password } = httpRequest.body;
 
       if (!email) return httpBadRequest(new MissingParamError("email"));
