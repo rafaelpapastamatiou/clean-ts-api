@@ -1,3 +1,4 @@
+import { IAuthentication } from "../../../domain/useCases/authentication";
 import { InvalidParamError, MissingParamError } from "../../errors";
 import {
   httpBadRequest,
@@ -12,7 +13,10 @@ import {
 } from "./login.protocols";
 
 export class LoginController implements IController {
-  constructor(private emailValidator: IEmailValidator) {}
+  constructor(
+    private emailValidator: IEmailValidator,
+    private authentication: IAuthentication
+  ) {}
 
   async handle(httpRequest: IHttpRequest): Promise<IHttpResponse> {
     try {
@@ -25,6 +29,11 @@ export class LoginController implements IController {
       const isEmailValid = this.emailValidator.isValid(email);
 
       if (!isEmailValid) return httpBadRequest(new InvalidParamError("email"));
+
+      await this.authentication.auth({
+        email,
+        password,
+      });
 
       return httpSuccess({});
     } catch (err) {
