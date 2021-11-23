@@ -1,3 +1,5 @@
+import { IErrorLogRepository } from "../../data/protocols/error-log.repository";
+import { httpServerError } from "../../presentation/helpers/http-helpers";
 import {
   IController,
   IHttpRequest,
@@ -8,9 +10,10 @@ import { LogControllerDecorator } from "./log-controller.decorator";
 interface IMakeSut {
   sut: LogControllerDecorator;
   controllerStub: IController;
+  errorLogRepositoryStub: IErrorLogRepository;
 }
 
-const makeSut = (): IMakeSut => {
+const makeController = (): IController => {
   class ControllerStub implements IController {
     async handle(_httpRequest: IHttpRequest): Promise<IHttpResponse> {
       return {
@@ -22,13 +25,32 @@ const makeSut = (): IMakeSut => {
     }
   }
 
-  const controllerStub = new ControllerStub();
+  return new ControllerStub();
+};
 
-  const sut = new LogControllerDecorator(controllerStub);
+const makeErrorLogRepository = (): IErrorLogRepository => {
+  class ErrorLogRepositoruStub implements IErrorLogRepository {
+    async log(stack: string): Promise<void> {
+      // TODO
+    }
+  }
+
+  return new ErrorLogRepositoruStub();
+};
+
+const makeSut = (): IMakeSut => {
+  const controllerStub = makeController();
+  const errorLogRepositoryStub = makeErrorLogRepository();
+
+  const sut = new LogControllerDecorator(
+    controllerStub,
+    errorLogRepositoryStub
+  );
 
   return {
     sut,
     controllerStub,
+    errorLogRepositoryStub,
   };
 };
 
@@ -68,5 +90,31 @@ describe("LogController Decorator", () => {
         ok: true,
       },
     });
+  });
+
+  test("should call ErrorLogRepository with error if controller returns a HttpServerError", async () => {
+    const { sut, controllerStub, errorLogRepositoryStub } = makeSut();
+
+    const fakeError = new Error();
+    fakeError.stack = "any error stack";
+
+    jest
+      .spyOn(controllerStub, "handle")
+      .mockReturnValueOnce(
+        new Promise((resolve) => resolve(httpServerError(fakeError)))
+      );
+
+    const logSpy = jest.spyOn(errorLogRepositoryStub, "log");
+
+    const httpRequest: IHttpRequest = {
+      body: {
+        name: "John Doe",
+        email: "johndoe@gmail.com",
+      },
+    };
+
+    await sut.handle(httpRequest);
+
+    expect(logSpy).toHaveBeenCalledWith(fakeError.stack);
   });
 });
