@@ -46,7 +46,9 @@ export class LoginController implements IController {
 
       if (!accessToken) return httpUnauthorized();
 
-      return httpSuccess({});
+      return httpSuccess({
+        accessToken,
+      });
     } catch (err) {
       return httpServerError(err as Error);
     }
