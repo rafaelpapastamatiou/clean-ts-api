@@ -1,3 +1,7 @@
+import {
+  IAuthentication,
+  IAuthenticationModel,
+} from "../../../domain/useCases/authentication";
 import { InvalidParamError, MissingParamError } from "../../errors";
 import { httpBadRequest, httpServerError } from "../../helpers/http-helpers";
 import { LoginController } from "./login.controller";
@@ -6,6 +10,7 @@ import { IEmailValidator, IHttpRequest } from "./login.protocols";
 interface IMakeSut {
   sut: LoginController;
   emailValidatorStub: IEmailValidator;
+  authenticationStub: IAuthentication;
 }
 
 const makeFakeRequest = (): IHttpRequest => ({
@@ -17,7 +22,7 @@ const makeFakeRequest = (): IHttpRequest => ({
 
 const makeEmailValidator = (): IEmailValidator => {
   class EmailValidatorStub implements IEmailValidator {
-    isValid(email: string): boolean {
+    isValid(_email: string): boolean {
       return true;
     }
   }
@@ -25,14 +30,26 @@ const makeEmailValidator = (): IEmailValidator => {
   return new EmailValidatorStub();
 };
 
+const makeAuthentication = (): IAuthentication => {
+  class AuthenticationStub implements IAuthentication {
+    async auth(_data: IAuthenticationModel): Promise<string> {
+      return "any_token";
+    }
+  }
+
+  return new AuthenticationStub();
+};
+
 const makeSut = (): IMakeSut => {
   const emailValidatorStub = makeEmailValidator();
+  const authenticationStub = makeAuthentication();
 
-  const sut = new LoginController(emailValidatorStub);
+  const sut = new LoginController(emailValidatorStub, authenticationStub);
 
   return {
     sut,
     emailValidatorStub,
+    authenticationStub,
   };
 };
 
@@ -109,5 +126,20 @@ describe("Login Controller", () => {
     const httpResponse = await sut.handle(httpRequest);
 
     expect(httpResponse).toEqual(httpServerError(fakeError));
+  });
+
+  test("should call Authentication with correct values", async () => {
+    const { sut, authenticationStub } = makeSut();
+
+    const authSpy = jest.spyOn(authenticationStub, "auth");
+
+    const httpRequest = makeFakeRequest();
+
+    await sut.handle(httpRequest);
+
+    expect(authSpy).toHaveBeenCalledWith({
+      email: httpRequest.body.email,
+      password: httpRequest.body.password,
+    });
   });
 });
