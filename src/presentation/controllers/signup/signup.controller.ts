@@ -53,7 +53,7 @@ export class SignUpController implements IController {
 
       return httpSuccess(account);
     } catch (err) {
-      return httpServerError();
+      return httpServerError(err as Error);
     }
   }
 }
