@@ -14,7 +14,11 @@ import {
 export class LoginController implements IController {
   async handle(httpRequest: IHttpRequest): Promise<IHttpResponse> {
     try {
-      return httpBadRequest(new MissingParamError("email"));
+      const { email, password } = httpRequest.body;
+
+      if (!email) return httpBadRequest(new MissingParamError("email"));
+
+      return httpBadRequest(new MissingParamError("password"));
     } catch (err) {
       return httpServerError(err as Error);
     }
