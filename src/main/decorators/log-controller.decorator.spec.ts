@@ -1,5 +1,4 @@
 import { IErrorLogRepository } from "../../data/protocols/error-log.repository";
-import { ServerError } from "../../presentation/errors";
 import {
   httpServerError,
   httpSuccess,
@@ -47,7 +46,7 @@ const makeController = (): IController => {
 
 const makeErrorLogRepository = (): IErrorLogRepository => {
   class ErrorLogRepositoruStub implements IErrorLogRepository {
-    async log(_stack: string): Promise<void> {
+    async logError(_stack: string): Promise<void> {
       // TODO
     }
   }
@@ -105,7 +104,7 @@ describe("LogController Decorator", () => {
       .spyOn(controllerStub, "handle")
       .mockReturnValueOnce(new Promise((resolve) => resolve(fakeServerError)));
 
-    const logSpy = jest.spyOn(errorLogRepositoryStub, "log");
+    const logSpy = jest.spyOn(errorLogRepositoryStub, "logError");
 
     const httpRequest = makeFakeRequest();
 
