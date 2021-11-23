@@ -22,7 +22,9 @@ export class LoginController implements IController {
 
       if (!password) return httpBadRequest(new MissingParamError("password"));
 
-      this.emailValidator.isValid(email);
+      const isEmailValid = this.emailValidator.isValid(email);
+
+      if (!isEmailValid) return httpBadRequest(new InvalidParamError("email"));
 
       return httpSuccess({});
     } catch (err) {
