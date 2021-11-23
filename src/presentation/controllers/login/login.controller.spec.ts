@@ -1,5 +1,5 @@
 import { InvalidParamError, MissingParamError } from "../../errors";
-import { httpBadRequest } from "../../helpers/http-helpers";
+import { httpBadRequest, httpServerError } from "../../helpers/http-helpers";
 import { LoginController } from "./login.controller";
 import { IEmailValidator, IHttpRequest } from "./login.protocols";
 
@@ -93,5 +93,21 @@ describe("Login Controller", () => {
     expect(httpResponse).toEqual(
       httpBadRequest(new InvalidParamError("email"))
     );
+  });
+
+  test("should return 500 if EmailValidator throws", async () => {
+    const { sut, emailValidatorStub } = makeSut();
+
+    const fakeError = new Error();
+
+    jest.spyOn(emailValidatorStub, "isValid").mockImplementationOnce(() => {
+      throw fakeError;
+    });
+
+    const httpRequest = makeFakeRequest();
+
+    const httpResponse = await sut.handle(httpRequest);
+
+    expect(httpResponse).toEqual(httpServerError(fakeError));
   });
 });
