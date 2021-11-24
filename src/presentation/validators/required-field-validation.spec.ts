@@ -1,9 +1,13 @@
 import { MissingParamError } from "../errors";
 import { RequiredFieldValidation } from "./required-field-validation";
 
+const makeSut = (): RequiredFieldValidation => {
+  return new RequiredFieldValidation("field");
+};
+
 describe("RequiredField Validation", () => {
   test("should return a MissingParamError if validation fails", async () => {
-    const sut = new RequiredFieldValidation("field");
+    const sut = makeSut();
 
     const error = await sut.validate({
       name: "any_name",
@@ -12,8 +16,8 @@ describe("RequiredField Validation", () => {
     expect(error).toEqual(new MissingParamError("field"));
   });
 
-  test("should return undefined if validation succeeds", async () => {
-    const sut = new RequiredFieldValidation("field");
+  test("should return a falsy value if validation succeeds", async () => {
+    const sut = makeSut();
 
     const error = await sut.validate({
       field: "any_field",
