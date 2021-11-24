@@ -1,10 +1,10 @@
-import { DbAddAccount } from "../../data/useCases/addAccount/db-add-account";
-import { BcryptAdapter } from "../../infra/cryptography/bcrypt.adapter";
-import { MongoAccountRepository } from "../../infra/database/mongodb/repositories/account/account.repository";
-import { MongoLogRepository } from "../../infra/database/mongodb/repositories/log/log.repository";
-import { SignUpController } from "../../presentation/controllers/signup/signup.controller";
-import { IController } from "../../presentation/protocols";
-import { LogControllerDecorator } from "../decorators/log-controller.decorator";
+import { DbAddAccount } from "../../../data/useCases/addAccount/db-add-account";
+import { BcryptAdapter } from "../../../infra/cryptography/bcrypt.adapter";
+import { MongoAccountRepository } from "../../../infra/database/mongodb/repositories/account/account.repository";
+import { MongoLogRepository } from "../../../infra/database/mongodb/repositories/log/log.repository";
+import { SignUpController } from "../../../presentation/controllers/signup/signup.controller";
+import { IController } from "../../../presentation/protocols";
+import { LogControllerDecorator } from "../../decorators/log-controller.decorator";
 import { makeSignUpValidation } from "./signup-validation.factory";
 
 export const makeSignUpController = (): IController => {

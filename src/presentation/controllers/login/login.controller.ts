@@ -1,4 +1,3 @@
-import { InvalidParamError, MissingParamError } from "../../errors";
 import {
   httpBadRequest,
   httpServerError,
@@ -7,33 +6,27 @@ import {
 } from "../../helpers/http-helpers";
 import {
   IController,
-  IEmailValidator,
   IHttpRequest,
   IHttpResponse,
   IAuthentication,
+  IValidation,
 } from "./login.protocols";
 
 export class LoginController implements IController {
   constructor(
-    private emailValidator: IEmailValidator,
-    private authentication: IAuthentication
+    private authentication: IAuthentication,
+    private validation: IValidation
   ) {}
 
   async handle(httpRequest: IHttpRequest): Promise<IHttpResponse> {
     try {
-      const requiredFields = ["email", "password"];
+      const error = await this.validation.validate(httpRequest.body);
 
-      for (const field of requiredFields) {
-        if (!httpRequest.body[field]) {
-          return httpBadRequest(new MissingParamError(field));
-        }
+      if (error) {
+        return httpBadRequest(error);
       }
 
       const { email, password } = httpRequest.body;
-
-      const isEmailValid = this.emailValidator.isValid(email);
-
-      if (!isEmailValid) return httpBadRequest(new InvalidParamError("email"));
 
       const accessToken = await this.authentication.auth({
         email,
