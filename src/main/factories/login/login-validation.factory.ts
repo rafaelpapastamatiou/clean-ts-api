@@ -1,6 +1,6 @@
+import { IValidation } from "../../../presentation/protocols/validation";
 import { EmailValidation } from "../../../presentation/validators/email-validation";
 import { RequiredFieldValidation } from "../../../presentation/validators/required-field-validation";
-import { IValidation } from "../../../presentation/validators/validation";
 import { ValidationComposite } from "../../../presentation/validators/validation.composite";
 import { EmailValidatorAdapter } from "../../../utils/email-validator.adapter";
 
