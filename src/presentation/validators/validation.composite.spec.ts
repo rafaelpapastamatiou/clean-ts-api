@@ -3,7 +3,7 @@ import { ValidationComposite } from "./validation.composite";
 
 interface IMakeSut {
   sut: ValidationComposite;
-  validationStub: IValidation;
+  validationStubs: IValidation[];
 }
 
 const makeValidation = (): IValidation => {
@@ -17,22 +17,22 @@ const makeValidation = (): IValidation => {
 };
 
 const makeSut = (): IMakeSut => {
-  const validationStub = makeValidation();
+  const validationStubs = [makeValidation(), makeValidation()];
 
-  const sut = new ValidationComposite([validationStub]);
+  const sut = new ValidationComposite(validationStubs);
 
   return {
     sut,
-    validationStub,
+    validationStubs,
   };
 };
 
 describe("ValidationComposite", () => {
   test("should return an error if any validation fails", async () => {
-    const { validationStub, sut } = makeSut();
+    const { validationStubs, sut } = makeSut();
 
     jest
-      .spyOn(validationStub, "validate")
+      .spyOn(validationStubs[1], "validate")
       .mockReturnValueOnce(new Promise((resolve) => resolve(new Error())));
 
     const error = await sut.validate({
@@ -40,5 +40,27 @@ describe("ValidationComposite", () => {
     });
 
     expect(error).toEqual(new Error());
+  });
+
+  test("should return the first error if more then one validation fails", async () => {
+    const { validationStubs, sut } = makeSut();
+
+    jest
+      .spyOn(validationStubs[0], "validate")
+      .mockReturnValueOnce(
+        new Promise((resolve) => resolve(new Error("first_error")))
+      );
+
+    jest
+      .spyOn(validationStubs[1], "validate")
+      .mockReturnValueOnce(
+        new Promise((resolve) => resolve(new Error("second_error")))
+      );
+
+    const error = await sut.validate({
+      field: "any_value",
+    });
+
+    expect(error).toEqual(new Error("first_error"));
   });
 });
