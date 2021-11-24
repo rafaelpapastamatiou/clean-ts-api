@@ -1,4 +1,3 @@
-import { InvalidParamError } from "../../errors";
 import {
   httpBadRequest,
   httpServerError,
@@ -6,7 +5,6 @@ import {
 } from "../../helpers/http-helpers";
 import {
   IController,
-  IEmailValidator,
   IHttpRequest,
   IHttpResponse,
   IAddAccount,
@@ -15,7 +13,6 @@ import {
 
 export class SignUpController implements IController {
   constructor(
-    private emailValidator: IEmailValidator,
     private addAccount: IAddAccount,
     private validation: IValidation
   ) {}
@@ -29,12 +26,6 @@ export class SignUpController implements IController {
       }
 
       const { email, password, name } = httpRequest.body;
-
-      const emailIsValid = this.emailValidator.isValid(email);
-
-      if (!emailIsValid) {
-        return httpBadRequest(new InvalidParamError("email"));
-      }
 
       const account = await this.addAccount.add({
         name,
