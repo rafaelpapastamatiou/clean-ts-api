@@ -63,8 +63,8 @@ const makeAddAccount = (): IAddAccount => {
 
 const makeValidation = (): IValidation => {
   class ValidationStub implements IValidation {
-    async validate(_data: Record<string, unknown>): Promise<Error | undefined> {
-      return undefined;
+    async validate(_data: Record<string, unknown>): Promise<Error[]> {
+      return [];
     }
   }
 
@@ -287,5 +287,21 @@ describe("SignUp Controller", () => {
     sut.handle(httpRequest);
 
     expect(validateSpy).toHaveBeenCalledWith(httpRequest.body);
+  });
+
+  test("should return 400 if Validation returns an error", async () => {
+    const { sut, validationStub } = makeSut();
+
+    const fakeErrors = [new MissingParamError("any_field")];
+
+    jest
+      .spyOn(validationStub, "validate")
+      .mockReturnValueOnce(new Promise((resolve) => resolve(fakeErrors)));
+
+    const httpRequest = makeFakeRequest();
+
+    const httpResponse = await sut.handle(httpRequest);
+
+    expect(httpResponse).toEqual(httpBadRequest(fakeErrors));
   });
 });
