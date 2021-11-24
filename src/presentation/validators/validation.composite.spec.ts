@@ -63,4 +63,14 @@ describe("ValidationComposite", () => {
 
     expect(error).toEqual(new Error("first_error"));
   });
+
+  test("should return a falsy value if validation succeeds", async () => {
+    const { sut } = makeSut();
+
+    const error = await sut.validate({
+      field: "any_value",
+    });
+
+    expect(error).toBeFalsy();
+  });
 });
