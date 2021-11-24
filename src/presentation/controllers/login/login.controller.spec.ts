@@ -4,7 +4,7 @@ import {
   httpServerError,
   httpSuccess,
   httpUnauthorized,
-} from "../../helpers/http-helpers";
+} from "../../helpers/http/http-helpers";
 import { LoginController } from "./login.controller";
 import {
   IHttpRequest,

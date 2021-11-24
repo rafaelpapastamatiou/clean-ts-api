@@ -3,7 +3,7 @@ import {
   httpBadRequest,
   httpServerError,
   httpSuccess,
-} from "../../helpers/http-helpers";
+} from "../../helpers/http/http-helpers";
 import { SignUpController } from "./signup.controller";
 import {
   IAddAccount,

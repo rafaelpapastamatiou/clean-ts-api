@@ -2,7 +2,7 @@ import { IErrorLogRepository } from "../../data/protocols/error-log.repository";
 import {
   httpServerError,
   httpSuccess,
-} from "../../presentation/helpers/http-helpers";
+} from "../../presentation/helpers/http/http-helpers";
 import {
   IController,
   IHttpRequest,
