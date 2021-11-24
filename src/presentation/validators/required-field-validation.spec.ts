@@ -11,4 +11,14 @@ describe("RequiredField Validation", () => {
 
     expect(error).toEqual(new MissingParamError("field"));
   });
+
+  test("should return undefined if validation succeeds", async () => {
+    const sut = new RequiredFieldValidation("field");
+
+    const error = await sut.validate({
+      field: "any_field",
+    });
+
+    expect(error).toBeFalsy();
+  });
 });
