@@ -4,8 +4,11 @@ import { MongoAccountRepository } from "../../infra/database/mongodb/repositorie
 import { MongoLogRepository } from "../../infra/database/mongodb/repositories/log/log.repository";
 import { SignUpController } from "../../presentation/controllers/signup/signup.controller";
 import { IController } from "../../presentation/protocols";
+import { RequiredFieldValidation } from "../../presentation/validators/required-field-validation";
+import { ValidationComposite } from "../../presentation/validators/validation.composite";
 import { EmailValidatorAdapter } from "../../utils/email-validator.adapter";
 import { LogControllerDecorator } from "../decorators/log-controller.decorator";
+import { makeSignUpValidation } from "./signup-validation.factory";
 
 export const makeSignUpController = (): IController => {
   const emailValidatorAdapter = new EmailValidatorAdapter();
@@ -18,9 +21,12 @@ export const makeSignUpController = (): IController => {
 
   const dbAddAccount = new DbAddAccount(bcryptAdapter, mongoAccountRepository);
 
+  const validationComposite = makeSignUpValidation();
+
   const signUpController = new SignUpController(
     emailValidatorAdapter,
-    dbAddAccount
+    dbAddAccount,
+    validationComposite
   );
 
   return new LogControllerDecorator(signUpController, mongoLogRepository);

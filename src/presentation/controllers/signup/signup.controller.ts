@@ -22,10 +22,10 @@ export class SignUpController implements IController {
 
   async handle(httpRequest: IHttpRequest): Promise<IHttpResponse> {
     try {
-      const errors = await this.validation.validate(httpRequest.body);
+      const error = await this.validation.validate(httpRequest.body);
 
-      if (errors.length > 0) {
-        return httpBadRequest(errors);
+      if (error) {
+        return httpBadRequest(error);
       }
 
       const { email, password, passwordConfirmation, name } = httpRequest.body;

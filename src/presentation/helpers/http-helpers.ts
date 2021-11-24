@@ -2,10 +2,10 @@ import { ServerError } from "../errors";
 import { UnauthorizedError } from "../errors/unauthorized.error";
 import { IHttpResponse } from "../protocols";
 
-export function httpBadRequest(err: Error | Error[]): IHttpResponse {
+export function httpBadRequest(err: Error): IHttpResponse {
   return {
     statusCode: 400,
-    body: Array.isArray(err) ? { errors: err } : { errors: [err] },
+    body: err,
   };
 }
 
